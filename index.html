@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>物理公式百科</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+  .container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .nothing {
+    flex: 1;
+    background: #f7f7f7;
+    color: #ccc;
+    display: grid;
+    place-items: center;
+    font-size: clamp(2rem, 7vw, 5rem);
+    font-weight: 200;
+    user-select: none;
+  }
+  .everything {
+    flex: 1;
+    background: #111;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-size: clamp(2rem, 7vw, 5rem);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+    user-select: none;
+  }
+  .everything:hover {
+    background: #222;
+  }
+  #formulaPage {
+    position: fixed;
+    inset: 0;
+    background: #fff;
+    transform: translateY(100%);
+    transition: transform 0.7s cubic-bezier(0.3, 1, 0.3, 1);
+    overflow-y: auto;
+    padding: 1.5rem 1rem;
+  }
+  #formulaPage.active {
+    transform: translateY(0);
+  }
+  .backBtn {
+    position: sticky;
+    top: 0;
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 0.8rem 1.4rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    z-index: 10;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .box {
+    height: 140px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    gap: 0.4rem;
+  }
+  .clickable {
+    cursor: pointer;
+    background: #f0f7ff;
+  }
+  .formula {
+    font-size: 1.1rem;
+    color: #000;
+    white-space: nowrap;
+  }
+  .info {
+    font-size: 0.75rem;
+    color: #666;
+    text-align: center;
+    line-height: 1.3;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="nothing">Nothing</div>
+  <div class="everything" id="open">Everything</div>
+</div>
+
+<div id="formulaPage">
+  <button class="backBtn" id="back">← 返回</button>
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+// ==============================================
+//  👇 👇 以后你只改这里！每周加一条！ 👇 👇
+// ==============================================
+const formulaList = [
+  {
+    tex: "E=mc^2",
+    author: "爱因斯坦",
+    year: "1905",
+    field: "相对论",
+    link: "https://zh.wikipedia.org/wiki/质能等价"
+  },
+  {
+    tex: "F=ma",
+    author: "牛顿",
+    year: "1687",
+    field: "经典力学"
+  },
+  {
+    tex: "a^2 + b^2 = c^2",
+    author: "毕达哥拉斯",
+    year: "公元前",
+    field: "数学"
+  },
+  {
+    tex: "PV=nRT",
+    author: "克拉伯龙",
+    year: "1834",
+    field: "热力学"
+  },
+  // 👉 你以后就在下面继续加，复制上面一段改一改就行
+];
+
+// 下面的代码你永远不用动
+const grid = document.getElementById("grid");
+function renderAll() {
+  grid.innerHTML = "";
+  formulaList.forEach(item => {
+    const box = document.createElement("div");
+    let cls = "box";
+    if (item.link) cls += " clickable";
+    box.className = cls;
+
+    const fml = katex.renderToString(item.tex, {throwOnError: false});
+
+    box.innerHTML = `
+      <div class="formula">${fml}</div>
+      <div class="info">${item.author} · ${item.year} · ${item.field}</div>
+    `;
+
+    if (item.link) {
+      box.onclick = () => window.open(item.link, "_blank");
+    }
+    grid.appendChild(box);
+  });
+}
+
+document.getElementById("open").onclick = () => {
+  document.getElementById("formulaPage").classList.add("active");
+  renderAll();
+};
+document.getElementById("back").onclick = () => {
+  document.getElementById("formulaPage").classList.remove("active");
+};
+</script>
+</body>
+</html>
